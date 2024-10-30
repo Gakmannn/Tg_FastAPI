@@ -2,16 +2,17 @@ import logging
 from contextlib import asynccontextmanager
 from app.bot.create_bot import bot, dp, stop_bot, start_bot
 from app.bot.handlers.user_router import user_router
+from app.bot.handlers.admin_router import admin_router
 from app.config import settings
 from aiogram.types import Update
 from fastapi import FastAPI, Request
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info("Starting bot setup...")
+    dp.include_router(admin_router)
     dp.include_router(user_router)
     await start_bot()
     webhook_url = settings.get_webhook_url()
